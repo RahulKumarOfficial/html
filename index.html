@@ -23,6 +23,7 @@
             --success: #10b981;
             --resizer: #334155;
             --tab-active: #272822;
+            --drawer-bg: #1e293b;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -49,6 +50,16 @@
             z-index: 1000;
         }
 
+        .menu-toggle {
+            display: none;
+            background: transparent;
+            color: white;
+            font-size: 20px;
+            border: none;
+            cursor: pointer;
+            padding: 5px;
+        }
+
         .logo { font-weight: 800; font-size: 1.1rem; color: var(--accent); white-space: nowrap; }
         .logo span { color: white; }
 
@@ -68,6 +79,51 @@
         .btn-red { background: var(--danger); }
         .btn-green { background: var(--success); }
         .btn-icon { width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; }
+
+        /* Navigation Drawer CSS */
+        .drawer {
+            position: fixed;
+            top: 0;
+            left: -280px;
+            width: 280px;
+            height: 100%;
+            background: var(--drawer-bg);
+            z-index: 9999;
+            box-shadow: 4px 0 15px rgba(0,0,0,0.5);
+            transition: left 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            border-right: 1px solid #2d3748;
+        }
+        .drawer.open { left: 0; }
+        .drawer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            border-bottom: 1px solid #334155;
+            padding-bottom: 15px;
+        }
+        .drawer-title { font-weight: 800; font-size: 1.1rem; color: var(--accent); }
+        .drawer-title span { color: white; }
+        .drawer-close { background: transparent; color: var(--danger); font-size: 20px; padding: 5px; }
+        
+        .drawer-content { display: flex; flex-direction: column; gap: 18px; }
+        .drawer-item { display: flex; flex-direction: column; gap: 8px; }
+        .drawer-item label { font-size: 12px; color: #94a3b8; font-weight: 600; }
+        .drawer-row { display: flex; gap: 10px; }
+        .drawer-row button, .drawer-content select, .drawer-content button { width: 100%; height: 40px; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; border-radius: 6px; }
+
+        /* Drawer Overlay */
+        .drawer-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 9998;
+        }
+        .drawer-overlay.open { display: block; }
 
         /* File Tabs Bar */
         .file-tabs {
@@ -138,34 +194,83 @@
         .fullscreen-preview #editor-wrapper, 
         .fullscreen-preview #gutter { display: none; }
 
-        /* Responsive Mobile Adjustments - Ultra Precision Fixed */
+        /* Responsive Mobile Adjustments - Fixed Clean Front/Header */
         @media (max-width: 700px) {
+            .menu-toggle { display: block; }
             .navbar { 
                 height: 52px; 
-                padding: 0 4px; 
+                padding: 0 10px; 
                 flex-direction: row; 
-                justify-content: center;
+                justify-content: space-between;
             }
             .logo { display: none !important; }
-            .controls { display: flex; flex: 1; justify-content: space-between; gap: 3px; width: 100%; max-width: 100%; }
             
-            /* Restricting width on mobile dropdown selectors to avoid overflow */
-            #project-list { max-width: 85px; text-overflow: ellipsis; padding: 6px 3px; font-size: 11px; }
-            #theme-selector { max-width: 80px; text-overflow: ellipsis; padding: 6px 3px; font-size: 11px; }
+            /* Front me sirf Menu, Project Dropdown, Add Project aur Full Preview bachega */
+            .controls { display: flex; gap: 6px; width: auto; }
+            #project-list { max-width: 130px; text-overflow: ellipsis; padding: 6px 4px; font-size: 12px; }
+            button { padding: 6px 8px; font-size: 12px; }
+            .btn-icon { width: 32px; height: 32px; }
             
-            button { padding: 6px 7px; font-size: 11px; }
-            .btn-icon { width: 30px; height: 30px; flex-shrink: 0; }
+            /* Hiding Theme, Delete, Save, Undo, Redo, Format from Front Navbar Header */
+            .navbar #theme-selector,
+            .navbar .btn-red,
+            .navbar .btn-blue:not([onclick="toggleFS()"]),
+            .navbar .btn-green,
+            .navbar .btn-icon:not([onclick="addNewProject()"]):not([onclick="toggleFS()"]) { 
+                display: none !important; 
+            }
             
+            .hide-mobile { display: none; }
             .app-main { flex-direction: column; }
             #editor-wrapper { width: 100% !important; height: 50%; }
             #gutter { width: 100%; height: 8px; cursor: row-resize; }
-            .hide-mobile { display: none; }
         }
     </style>
 </head>
 <body>
 
+    <div class="drawer-overlay" id="drawer-overlay" onclick="closeDrawer()"></div>
+
+    <div class="drawer" id="side-drawer">
+        <div class="drawer-header">
+            <div class="drawer-title">DS IDE <span>PRO</span></div>
+            <button class="drawer-close" onclick="closeDrawer()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="drawer-content">
+            <div class="drawer-item">
+                <label>History Tools</label>
+                <div class="drawer-row">
+                    <button onclick="editor.undo(); closeDrawer();" title="Undo"><i class="fas fa-undo"></i> Undo</button>
+                    <button onclick="editor.redo(); closeDrawer();" title="Redo"><i class="fas fa-redo"></i> Redo</button>
+                </div>
+            </div>
+
+            <div class="drawer-item">
+                <label>Editor Theme</label>
+                <select id="drawer-theme-selector" onchange="changeThemeFromDrawer()" title="Editor Theme">
+                    <option value="monokai">Monokai</option>
+                    <option value="dracula">Dracula</option>
+                    <option value="material-palenight">Material</option>
+                    <option value="eclipse">Eclipse (Light)</option>
+                </select>
+            </div>
+
+            <div class="drawer-item">
+                <label>Code Formatting</label>
+                <button class="btn-green" onclick="formatCode(); closeDrawer();" title="Format Code"><i class="fas fa-magic"></i> Format Code</button>
+            </div>
+
+            <div class="drawer-item">
+                <label>Project Actions</label>
+                <button class="btn-blue" style="margin-bottom: 8px;" onclick="downloadCode(); closeDrawer();" title="Save & Download"><i class="fas fa-save"></i> Save Code</button>
+                <button class="btn-red" onclick="deleteCurrentProject(); closeDrawer();" title="Delete Project"><i class="fas fa-trash-alt"></i> Delete Project</button>
+            </div>
+        </div>
+    </div>
+
     <nav class="navbar">
+        <button class="menu-toggle" onclick="openDrawer()"><i class="fas fa-bars"></i></button>
+
         <div class="logo">DREAM<span>SUCCESS</span></div>
                 
         <div class="controls">
@@ -236,8 +341,10 @@
         const iframe = document.getElementById('iframe-output');
         const projectDrop = document.getElementById('project-list');
         const themeSelector = document.getElementById('theme-selector');
+        const drawerThemeSelector = document.getElementById('drawer-theme-selector');
+        const drawer = document.getElementById('side-drawer');
+        const overlay = document.getElementById('drawer-overlay');
                 
-        // CSS and JS fields are now completely empty by default
         const defaultProjectData = {
             html: `<!DOCTYPE html>\n<html>\n<head>\n  <meta charset="utf-8">\n  <meta name="viewport" content="width=device-width, initial-scale=1">\n  <title>New Project</title>\n  <link rel="stylesheet" href="style.css">\n</head>\n<body>\n  <h1>Welcome Ultimate Pro IDE!</h1>\n  <p>Your workspace is ready.</p>\n\n  <script src="script.js"><\/script>\n</body>\n</html>`,
             css: ``,
@@ -259,11 +366,22 @@
         });
 
         themeSelector.value = savedTheme;
+        drawerThemeSelector.value = savedTheme;
 
         editor.on("inputRead", function(cm, change) {
             if (change.text[0] === " " || change.origin === "+delete") return;
             cm.showHint({ completeOnSingleClick: false, closeOnUnfocus: true, completeSingle: false });
         });
+
+        /* Drawer Controllers */
+        function openDrawer() {
+            drawer.classList.add('open');
+            overlay.classList.add('open');
+        }
+        function closeDrawer() {
+            drawer.classList.remove('open');
+            overlay.classList.remove('open');
+        }
 
         function updateTabBackgroundColor(themeName) {
             if(themeName === 'monokai') document.documentElement.style.setProperty('--tab-active', '#272822');
@@ -429,8 +547,18 @@
         function changeTheme() {
             const selected = themeSelector.value;
             editor.setOption("theme", selected);
+            drawerThemeSelector.value = selected;
             localStorage.setItem('ds_v11_theme', selected); 
             switchFile(currentFile); 
+        }
+
+        function changeThemeFromDrawer() {
+            const selected = drawerThemeSelector.value;
+            editor.setOption("theme", selected);
+            themeSelector.value = selected;
+            localStorage.setItem('ds_v11_theme', selected); 
+            switchFile(currentFile);
+            closeDrawer();
         }
 
         function formatCode() {
