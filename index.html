@@ -1,531 +1,597 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Dream Success Classes - Elite Assessment Portal</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  
-  <style>
-    :root { 
-      --primary-color: #2563eb; 
-      --primary-light: #eff6ff;
-      --primary-hover: #1d4ed8;
-      --accent-color: #e11d48; 
-      --bg-color: #f8fafc; 
-      --white: #ffffff; 
-      --success-color: #16a34a; 
-      --review-color: #ea580c; 
-      --unvisited-color: #64748b;
-      --text-main: #0f172a;
-      --text-muted: #475569;
-      --border-color: #e2e8f0;
-      
-      --result-bg: #1e293b; 
-      --result-card-bg: rgba(255, 255, 255, 0.07);
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>DS Pro IDE - Ultimate Edition</title>
+        
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/monokai.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/material-palenight.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/eclipse.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    body { 
-      font-family: 'Inter', sans-serif; 
-      background-color: var(--bg-color);
-      background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
-      background-size: 24px 24px;
-      margin: 0; padding: 0; 
-      display: flex; justify-content: center; 
-      color: var(--text-main);
-      -webkit-font-smoothing: antialiased;
-    }
-    
-    .container { 
-      width: 100%; max-width: 1200px; 
-      background: var(--white); min-height: 100vh; 
-      padding: 12px 24px; box-sizing: border-box; 
-      position: relative; transition: margin-right 0.3s ease; 
-    }
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/show-hint.min.css">
 
-    /* FUTURE AD BANNER CONTAINER STYLE */
-    .future-ad-banner {
-      display: none; 
-      width: 100%;
-      height: 60px;
-      background: #f1f5f9;
-      border: 2px dashed #cbd5e1;
-      border-radius: 8px;
-      margin-bottom: 12px;
-      align-items: center;
-      justify-content: center;
-      color: #94a3b8;
-      font-size: 12px;
-      font-weight: 500;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      box-sizing: border-box;
-    }
+    <style>
+        :root {
+            --bg: #0f172a;
+            --header: #1e293b;
+            --accent: #3b82f6;
+            --danger: #ef4444;
+            --success: #10b981;
+            --resizer: #334155;
+            --tab-active: #272822;
+            --drawer-bg: #1e293b;
+        }
 
-    #nameInput { 
-      text-align: center; padding: 50px 40px; 
-      display: flex; flex-direction: column; align-items: center; 
-      max-width: 460px; margin: 40px auto;
-      border: 1px solid var(--border-color); border-radius: 16px;
-      box-shadow: 0 10px 25px -5px rgb(0 0 0 / 0.05);
-    }
-    .category-tag { 
-      font-size: 11px; font-weight: 700; color: var(--primary-color); 
-      margin-bottom: 20px; background: var(--primary-light);
-      padding: 6px 14px; border-radius: 20px; text-transform: uppercase;
-    }
-    h2 { margin: 0 0 30px 0; font-size: 26px; font-weight: 700; }
-    #studentName { 
-      width: 100%; padding: 14px 16px; font-size: 15px; 
-      border: 1px solid #cbd5e1; border-radius: 8px; outline: none; 
-      margin-bottom: 20px; text-align: center; box-sizing: border-box;
-    }
-    
-    .start-btn { 
-      width: 100%; padding: 16px; background: var(--primary-color); 
-      color: white; border: none; border-radius: 8px; 
-      font-size: 15px; font-weight: 600; cursor: pointer;
-    }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            background: var(--bg); 
+            color: white; 
+            font-family: 'Inter', sans-serif; 
+            height: 100vh; 
+            overflow: hidden; 
+            display: flex;
+            flex-direction: column;
+        }
 
-    #testContainer { display: none; width: 100%; }
-    
-    .top-bar { 
-      display: flex; justify-content: space-between; align-items: center; 
-      margin-bottom: 14px; padding: 12px 20px; 
-      background: #f8fafc; border-radius: 12px; border: 1px solid var(--border-color);
-    }
-    .header-right { display: flex; align-items: center; gap: 12px; }
-    #timer { 
-      font-size: 15px; font-weight: 700; color: var(--accent-color); 
-      background: #fef2f2; padding: 8px 16px; border-radius: 8px; 
-    }
-    #paletteToggle { 
-      background: #ffffff; border: 1px solid var(--border-color); 
-      width: 38px; height: 38px; border-radius: 8px; cursor: pointer;
-    }
+        /* Navbar Layout */
+        .navbar {
+            height: 60px;
+            background: var(--header);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 15px;
+            border-bottom: 1px solid #2d3748;
+            flex-shrink: 0;
+            z-index: 1000;
+        }
 
-    .progress-row {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      margin-bottom: 24px;
-      background: #f8fafc;
-      padding: 10px 16px;
-      border-radius: 8px;
-      border: 1px solid var(--border-color);
-    }
-    .q-counter-badge {
-      font-size: 14px;
-      font-weight: 700;
-      color: var(--primary-color);
-      background: var(--primary-light);
-      padding: 6px 12px;
-      border-radius: 6px;
-      white-space: nowrap;
-    }
-    .progress-bar-container {
-      flex-grow: 1;
-      background: #e2e8f0;
-      height: 8px;
-      border-radius: 10px;
-      overflow: hidden;
-    }
-    .progress-fill {
-      height: 100%;
-      background: var(--primary-color);
-      width: 0%;
-      transition: width 0.3s ease;
-    }
+        .menu-toggle {
+            display: none;
+            background: transparent;
+            color: white;
+            font-size: 20px;
+            border: none;
+            cursor: pointer;
+            padding: 5px;
+        }
 
-    .question-box {
-      margin-bottom: 24px;
-    }
-    .question { 
-      font-size: 19px; 
-      font-weight: 600; 
-      color: var(--text-main); 
-      line-height: 1.6; 
-      margin: 0 0 16px 0;
-    }
-    .q-image { max-width: 100%; height: auto; border-radius: 12px; margin-bottom: 24px; border: 1px solid var(--border-color); }
-    
-    .options { display: flex; flex-direction: column; gap: 12px; width: 100%; counter-reset: option-counter; }
-    .option-label { 
-      display: flex; align-items: center; padding: 16px 20px; 
-      border: 1px solid var(--border-color); border-radius: 8px; 
-      cursor: pointer; font-size: 15px; box-sizing: border-box; 
-      background: #fff; transition: all 0.15s ease;
-    }
-    .option-label::before {
-      counter-increment: option-counter;
-      content: counter(option-counter, uppercase);
-      display: flex; align-items: center; justify-content: center;
-      width: 26px; height: 26px; background: #f1f5f9;
-      border: 1px solid var(--border-color); border-radius: 6px;
-      margin-right: 14px; font-size: 12px; font-weight: 600; color: var(--text-muted);
-    }
-    .option-label:hover { border-color: #cbd5e1; background: #f8fafc; }
-    .option-label.selected { border-color: var(--primary-color); background: var(--primary-light); font-weight: 500; color: var(--primary-color); }
-    .option-label.selected::before { background: var(--primary-color); border-color: var(--primary-color); color: white; }
+        .logo { font-weight: 800; font-size: 1.1rem; color: var(--accent); white-space: nowrap; }
+        .logo span { color: white; }
 
-    /* =========================================================
-       PERFECTLY BALANCED BOTTOM BUTTONS CONSOLE
-       ========================================================= */
-    .buttons { 
-      display: flex; 
-      gap: 8px; 
-      margin-top: 40px; 
-      padding-bottom: 20px; 
-      width: 100%; 
-      box-sizing: border-box;
-    }
-    .nav-btn { 
-      flex: 1; /* Har ek button ko screen par barabar space milegi */
-      padding: 14px 4px; 
-      border-radius: 8px; 
-      border: 1px solid transparent; 
-      font-weight: 600; 
-      cursor: pointer; 
-      font-size: 13.5px; 
-      text-align: center;
-      box-sizing: border-box;
-      transition: all 0.15s ease; 
-      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-      white-space: nowrap; /* Text line break nahi hoga */
-    }
-    
-    .prev { background: #ffffff; color: var(--text-muted); border-color: var(--border-color); }
-    .prev:disabled { opacity: 0.4; cursor: not-allowed; box-shadow: none; }
-    .review-btn { background: #fffbeb; color: #b45309; border-color: #fef3c7; }
-    .submit-mid { background: var(--accent-color); color: white; }
-    .next { background: var(--primary-color); color: white; font-weight: 700; }
-    .next:hover { background: #1d4ed8; }
+        .controls { display: flex; gap: 6px; align-items: center; width: auto; }
 
-    /* Side Palette Hub */
-    #sidePalette { position: fixed; right: -340px; top: 0; width: 320px; height: 100%; background: white; box-shadow: -10px 0 20px rgba(0,0,0,0.03); transition: transform 0.2s ease; z-index: 1001; padding: 24px; box-sizing: border-box; display: flex; flex-direction: column; }
-    #sidePalette.open { transform: translateX(-340px); }
-    
-    .stats-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 16px 0; background: #f8fafc; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); text-align: center; }
-    .stat-box { font-size: 11px; font-weight: 500; color: var(--text-muted); }
-    .stat-box data { display: block; font-size: 16px; font-weight: 700; color: var(--text-main); margin-top: 2px; }
+        select, button {
+            background: #334155;
+            color: white;
+            border: none;
+            padding: 7px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+        }
 
-    .palette-legend { display: flex; justify-content: space-between; padding-top: 10px; border-top: 1px solid var(--border-color); font-size: 11px; color: var(--text-muted); text-align: center; }
-    .leg-item span { display: block; width: 16px; height: 16px; border-radius: 4px; margin: 0 auto 4px auto; }
+        .btn-blue { background: var(--accent); }
+        .btn-red { background: var(--danger); }
+        .btn-green { background: var(--success); }
+        .btn-icon { width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; }
 
-    .palette-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 20px; overflow-y: auto; flex-grow: 1; }
-    .palette-btn { width: 100%; aspect-ratio: 1; border-radius: 8px; border: 1px solid var(--border-color); background: #f8fafc; cursor: pointer; font-weight: 600; font-size: 14px; color: var(--text-muted); }
-    .palette-btn.answered { background: var(--success-color); color: white; border-color: var(--success-color); }
-    .palette-btn.reviewed { background: var(--review-color); color: white; border-color: var(--review-color); }
-    .palette-btn.current { border: 2px solid var(--primary-color); color: var(--primary-color); background: var(--primary-light); font-weight: 700; }
+        /* Navigation Drawer CSS */
+        .drawer {
+            position: fixed;
+            top: 0;
+            left: -300px;
+            width: 280px;
+            height: 100%;
+            background: var(--drawer-bg);
+            z-index: 9999;
+            box-shadow: 4px 0 15px rgba(0,0,0,0.5);
+            transition: left 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            border-right: 1px solid #2d3748;
+        }
+        .drawer.open { left: 0; }
+        .drawer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            border-bottom: 1px solid #334155;
+            padding-bottom: 15px;
+        }
+        .drawer-title { font-weight: 800; font-size: 1.1rem; color: var(--accent); }
+        .drawer-title span { color: white; }
+        .drawer-close { background: transparent; color: var(--danger); font-size: 20px; padding: 5px; }
+        
+        .drawer-content { display: flex; flex-direction: column; gap: 18px; }
+        .drawer-item { display: flex; flex-direction: column; gap: 8px; }
+        .drawer-item label { font-size: 12px; color: #94a3b8; font-weight: 600; }
+        .drawer-row { display: flex; gap: 10px; }
+        .drawer-row button, .drawer-content select, .drawer-content button { width: 100%; height: 40px; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; border-radius: 6px; }
 
-    @media (min-width: 1025px) {
-      .container { margin-right: 320px; width: calc(100% - 320px); max-width: 100%; border-right: 1px solid var(--border-color); padding-top: 16px; }
-      #sidePalette { right: 0 !important; border-left: 1px solid var(--border-color); box-shadow: none; transform: none !important; }
-      #sidePalette button[onclick="togglePalette()"] { display: none; }
-      #paletteToggle { display: none; }
-    }
+        /* Drawer Overlay */
+        .drawer-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 9998;
+        }
+        .drawer-overlay.open { display: block; }
 
-    @media (max-width: 767px) { 
-      .container { padding: 12px 16px; }
-      /* Mobile Dynamic Bottom Fixed Action Panel */
-      .buttons { 
-        position: fixed; 
-        bottom: 0; 
-        left: 0; 
-        background: white; 
-        padding: 10px 12px; 
-        box-shadow: 0 -6px 20px rgba(0,0,0,0.06); 
-        z-index: 999; 
-        gap: 8px;
-        margin-top: 0;
-      } 
-      #testContainer { padding-bottom: 90px; } 
-    }
+        /* File Tabs Bar */
+        .file-tabs {
+            display: flex;
+            background: #141b2d;
+            border-bottom: 1px solid #2d3748;
+            padding-left: 5px;
+        }
+        .tab {
+            padding: 8px 16px;
+            font-size: 12px;
+            cursor: pointer;
+            background: #1e293b;
+            color: #94a3b8;
+            border: 1px solid #2d3748;
+            border-bottom: none;
+            margin-right: 2px;
+            border-top-left-radius: 4px;
+            border-top-right-radius: 4px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .tab.active {
+            background: var(--tab-active);
+            color: white;
+            border-top: 2px solid var(--accent);
+        }
+        .tab i.fa-html5 { color: #e34c26; }
+        .tab i.fa-css3-alt { color: #264de4; }
+        .tab i.fa-js { color: #f0db4f; }
 
-    /* Executive Result Card CSS */
-    .summary-header { 
-      background: var(--result-bg); 
-      padding: 24px; border-radius: 12px; margin-bottom: 20px; color: white; text-align: center; 
-    }
-    .summary-header h3 { margin: 0 0 6px 0; font-size: 16px; font-weight: 500; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; }
-    .score-display { font-size: 32px; font-weight: 800; color: #ffffff; margin: 6px 0; letter-spacing: -0.02em; }
-    
-    .metrics-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 18px; }
-    .m-card { background: var(--result-card-bg); padding: 12px 4px; border-radius: 8px; font-size: 11px; font-weight: 500; color: #94a3b8; }
-    .m-card b { display: block; font-size: 16px; font-weight: 700; color: #ffffff; margin-top: 2px; }
+        /* Workspace */
+        .app-main { display: flex; flex: 1; width: 100%; overflow: hidden; position: relative; }
+        #editor-wrapper { width: 50%; height: 100%; display: flex; flex-direction: column; background: #272822; }
+        #editor-container { flex: 1; height: 100%; position: relative; }
+        .CodeMirror { height: 100% !important; font-size: 14px; }
 
-    .summary-box { max-height: 320px; overflow-y: auto; text-align: left; }
-    .sum-item { padding: 14px 16px; margin-bottom: 10px; border-radius: 8px; border: 1px solid var(--border-color); font-size: 13.5px; line-height: 1.5; }
-    .sum-item b { font-size: 14px; color: var(--text-main); display: inline-block; margin-bottom: 4px; }
-    .sum-correct { border-left: 4px solid var(--success-color); background: #f0fdf4; }
-    .sum-wrong { border-left: 4px solid var(--accent-color); background: #fef2f2; }
-    .sum-skipped { border-left: 4px solid var(--unvisited-color); background: #f8fafc; }
-    
-    .palette-grid::-webkit-scrollbar, .summary-box::-webkit-scrollbar { width: 5px; }
-    .palette-grid::-webkit-scrollbar-thumb, .summary-box::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
-  </style>
+        /* Autocomplete Custom UI */
+        .CodeMirror-hints {
+            background: #1e293b !important;
+            border: 1px solid #334155 !important;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            padding: 4px;
+            z-index: 99999;
+        }
+        .CodeMirror-hint { color: #cbd5e1 !important; padding: 6px 10px !important; border-radius: 4px; }
+        li.CodeMirror-hint-active { background: var(--accent) !important; color: white !important; }
+
+        #gutter {
+            width: 10px;
+            background: var(--resizer);
+            cursor: col-resize;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Split View Right Side */
+        #output-wrapper { flex: 1; display: flex; flex-direction: column; background: white; height: 100%; position: relative; }
+        #preview-container { flex: 1; position: relative; background: white; height: 100%; }
+        iframe { width: 100%; height: 100%; border: none; background: white; }
+        #drag-mask { display: none; position: absolute; inset: 0; z-index: 99; }
+
+        /* Modes Switch overrides */
+        .fullscreen-preview #editor-wrapper, 
+        .fullscreen-preview #gutter { display: none; }
+
+        /* Responsive Mobile Adjustments - Fixed Clean Front/Header */
+        @media (max-width: 700px) {
+            .menu-toggle { display: block; }
+            .navbar { 
+                height: 52px; 
+                padding: 0 10px; 
+                flex-direction: row; 
+                justify-content: space-between;
+            }
+            .logo { display: none !important; }
+            
+            /* Front me sirf Menu, Project Dropdown, Add Project aur Full Preview bachega */
+            .controls { display: flex; gap: 6px; width: auto; }
+            #project-list { max-width: 130px; text-overflow: ellipsis; padding: 6px 4px; font-size: 12px; }
+            button { padding: 6px 8px; font-size: 12px; }
+            .btn-icon { width: 32px; height: 32px; }
+            
+            /* Hiding Theme, Delete, Save, Undo, Redo, Format from Front Navbar Header */
+            .navbar #theme-selector,
+            .navbar .btn-red,
+            .navbar .btn-blue:not([onclick="toggleFS()"]),
+            .navbar .btn-green,
+            .navbar .btn-icon:not([onclick="addNewProject()"]):not([onclick="toggleFS()"]) { 
+                display: none !important; 
+            }
+            
+            .hide-mobile { display: none; }
+            .app-main { flex-direction: column; }
+            #editor-wrapper { width: 100% !important; height: 50%; }
+            #gutter { width: 100%; height: 8px; cursor: row-resize; }
+        }
+    </style>
 </head>
 <body>
 
-  <div class="container">
-    
-    <div class="future-ad-banner" id="topAdBanner">
-       Banner Advertisement Space
-    </div>
+    <div class="drawer-overlay" id="drawer-overlay" onclick="closeDrawer()"></div>
 
-    <div id="nameInput">
-      <span class="category-tag">📖 Lucent Online Assessment</span>
-      <h2>Quiz Management Portal</h2>
-      <input type="text" id="studentName" placeholder="Enter Student Full Name" autocomplete="off">
-      <button class="start-btn" onclick="startTest()">Start Online Test</button>
-    </div>
-
-    <div id="testContainer">
-      <div class="top-bar">
-        <span id="testTitle" style="font-weight:600; color: var(--text-main);">Loading User...</span>
-        <div class="header-right">
-          <div id="timer">🕒 50:00</div>
-          <button id="paletteToggle" onclick="togglePalette()">☰</button>
+    <div class="drawer" id="side-drawer">
+        <div class="drawer-header">
+            <div class="drawer-title">DS IDE <span>PRO</span></div>
+            <button class="drawer-close" onclick="closeDrawer()"><i class="fas fa-times"></i></button>
         </div>
-      </div>
-      
-      <div class="progress-row">
-         <span class="q-counter-badge" id="qCounter">00/00</span>
-         <div class="progress-bar-container">
-            <div class="progress-fill" id="progressFill"></div>
-         </div>
-      </div>
-      
-      <div id="quizBox">
-         <div class="question-box">
-            <div class="question" id="qText">Loading Question Content...</div>
-         </div>
-         <div id="qImageContainer"></div>
-         <div class="options" id="qOptions"></div>
-      </div>
-      
-      <div class="buttons">
-        <button class="nav-btn prev" id="prevBtn" onclick="previousQuestion()">Previous</button>
-        <button class="nav-btn review-btn" onclick="markReview()">Review</button>
-        <button class="nav-btn submit-mid" onclick="triggerManualSubmit()">Submit</button>
-        <button class="nav-btn next" id="nextBtn" onclick="handleNext()">Next</button>
-      </div>
+        <div class="drawer-content">
+            <div class="drawer-item">
+                <label>History Tools</label>
+                <div class="drawer-row">
+                    <button onclick="editor.undo(); closeDrawer();" title="Undo"><i class="fas fa-undo"></i> Undo</button>
+                    <button onclick="editor.redo(); closeDrawer();" title="Redo"><i class="fas fa-redo"></i> Redo</button>
+                </div>
+            </div>
+
+            <div class="drawer-item">
+                <label>Editor Theme</label>
+                <select id="drawer-theme-selector" onchange="changeThemeFromDrawer()" title="Editor Theme">
+                    <option value="monokai">Monokai</option>
+                    <option value="dracula">Dracula</option>
+                    <option value="material-palenight">Material</option>
+                    <option value="eclipse">Eclipse (Light)</option>
+                </select>
+            </div>
+
+            <div class="drawer-item">
+                <label>Code Formatting</label>
+                <button class="btn-green" onclick="formatCode(); closeDrawer();" title="Format Code"><i class="fas fa-magic"></i> Format Code</button>
+            </div>
+
+            <div class="drawer-item">
+                <label>Project Actions</label>
+                <button class="btn-blue" style="margin-bottom: 8px;" onclick="downloadCode(); closeDrawer();" title="Save & Download"><i class="fas fa-save"></i> Save Code</button>
+                <button class="btn-red" onclick="deleteCurrentProject(); closeDrawer();" title="Delete Project"><i class="fas fa-trash-alt"></i> Delete Project</button>
+            </div>
+        </div>
     </div>
-  </div>
 
-  <div id="sidePalette">
-    <button style="width:100%; padding:12px; border:1px solid var(--border-color); background:#f1f5f9; border-radius:8px; cursor:pointer; font-weight:500;" onclick="togglePalette()">✕ Close Panel</button>
-    <div class="stats-summary">
-      <div class="stat-box">Solved<data id="statSolved" style="color:var(--success-color)">0</data></div>
-      <div class="stat-box">Review<data id="statReview" style="color:var(--review-color)">0</data></div>
-      <div class="stat-box">Remaining<data id="statLeft">0</data></div>
+    <nav class="navbar">
+        <button class="menu-toggle" onclick="openDrawer()"><i class="fas fa-bars"></i></button>
+
+        <div class="logo">DREAM<span>SUCCESS</span></div>
+                
+        <div class="controls">
+            <select id="project-list" onchange="switchProject()"></select>
+            <button onclick="addNewProject()" title="Add Project"><i class="fas fa-plus"></i></button>
+            <button class="btn-red" onclick="deleteCurrentProject()" title="Delete Project"><i class="fas fa-trash-alt"></i></button>
+            
+            <select id="theme-selector" onchange="changeTheme()" title="Editor Theme">
+                <option value="monokai">Monokai</option>
+                <option value="dracula">Dracula</option>
+                <option value="material-palenight">Material</option>
+                <option value="eclipse">Eclipse (Light)</option>
+            </select>
+                        
+            <button class="btn-icon hide-mobile" onclick="editor.undo()" title="Undo"><i class="fas fa-undo"></i></button>
+            <button class="btn-icon hide-mobile" onclick="editor.redo()" title="Redo"><i class="fas fa-redo"></i></button>
+
+            <button class="btn-green btn-icon" onclick="formatCode()" title="Format Code (Prettier)"><i class="fas fa-magic"></i></button>
+            <button class="btn-blue btn-icon" onclick="toggleFS()" title="Full Preview"><i class="fas fa-expand"></i></button>
+            <button class="btn-blue" onclick="downloadCode()"><i class="fas fa-save"></i> <span class="hide-mobile">Save</span></button>
+        </div>
+    </nav>
+
+    <div class="app-main">
+        <div id="editor-wrapper">
+            <div class="file-tabs">
+                <div class="tab active" onclick="switchFile('html')" id="tab-html"><i class="fab fa-html5"></i> index.html</div>
+                <div class="tab" onclick="switchFile('css')" id="tab-css"><i class="fab fa-css3-alt"></i> style.css</div>
+                <div class="tab" onclick="switchFile('js')" id="tab-js"><i class="fab fa-js"></i> script.js</div>
+            </div>
+            <div id="editor-container">
+                <textarea id="real-editor"></textarea>
+            </div>
+        </div>
+        
+        <div id="gutter"></div>
+        
+        <div id="output-wrapper">
+            <div id="preview-container">
+                <div id="drag-mask"></div>
+                <iframe id="iframe-output"></iframe>
+            </div>
+        </div>
     </div>
-    <div class="palette-legend">
-      <div class="leg-item"><span style="background:var(--success-color)"></span>Solved</div>
-      <div class="leg-item"><span style="background:var(--review-color)"></span>Review</div>
-      <div class="leg-item"><span style="background:#f8fafc; border:1px solid var(--border-color)"></span>Unsaved</div>
-    </div>
-    <div class="palette-grid" id="paletteGrid"></div>
-  </div>
 
-<script>
-  const JSON_LINK = "https://rahulkumarofficial.github.io/test/history-10.json"; 
-  let timeLeft = 3000; 
-  const NEGATIVE_MARK = 0.25; 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
 
-  let questions = [], currentIdx = 0, userAns = [], reviewList = [], timerId = null, sName = "";
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closetag.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closebrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/show-hint.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/xml-hint.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/html-hint.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/css-hint.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/javascript-hint.min.js"></script>
 
-  function saveToLocal() {
-    const data = { sName, questions, currentIdx, userAns, reviewList, timeLeft, isActive: true };
-    localStorage.setItem('quiz_session_elite', JSON.stringify(data));
-  }
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.14.9/beautify.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.14.9/beautify-css.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.14.9/beautify-html.min.js"></script>
 
-  window.onload = function() {
-    const savedData = localStorage.getItem('quiz_session_elite');
-    if (savedData) {
-      const data = JSON.parse(savedData);
-      if (data.isActive) {
-        Swal.fire({
-          title: 'Resume Assessment?', text: "Pichla session mila hai. Kya aap wahan se jari rakhna chahte hain?", icon: 'info',
-          showCancelButton: true, confirmButtonText: 'Yes, Resume', cancelButtonText: 'No, Start Fresh'
-        }).then((result) => {
-          if (result.isConfirmed) {
-            sName = data.sName; questions = data.questions; currentIdx = data.currentIdx;
-            userAns = data.userAns; reviewList = data.reviewList; timeLeft = data.timeLeft;
-            launchTest();
-          } else { localStorage.removeItem('quiz_session_elite'); }
+    <script>
+        const editorPanel = document.getElementById('editor-wrapper');
+        const gutter = document.getElementById('gutter');
+        const mask = document.getElementById('drag-mask');
+        const iframe = document.getElementById('iframe-output');
+        const projectDrop = document.getElementById('project-list');
+        const themeSelector = document.getElementById('theme-selector');
+        const drawerThemeSelector = document.getElementById('drawer-theme-selector');
+        const drawer = document.getElementById('side-drawer');
+        const overlay = document.getElementById('drawer-overlay');
+                
+        const defaultProjectData = {
+            html: `<!DOCTYPE html>\n<html>\n<head>\n  <meta charset="utf-8">\n  <meta name="viewport" content="width=device-width, initial-scale=1">\n  <title>New Project</title>\n  <link rel="stylesheet" href="style.css">\n</head>\n<body>\n  <h1>Welcome Ultimate Pro IDE!</h1>\n  <p>Your workspace is ready.</p>\n\n  <script src="script.js"><\/script>\n</body>\n</html>`,
+            css: ``,
+            js: ``
+        };
+
+        let currentFile = 'html'; 
+
+        const savedTheme = localStorage.getItem('ds_v11_theme') || "monokai";
+
+        const editor = CodeMirror.fromTextArea(document.getElementById('real-editor'), {
+            mode: "text/html",
+            theme: savedTheme,
+            lineNumbers: true,
+            lineWrapping: true,
+            autoCloseTags: true,
+            autoCloseBrackets: true,
+            extraKeys: { "Ctrl-Space": "autocomplete" }
         });
-      }
-    }
 
-    window.addEventListener('keydown', (e) => {
-      if (document.getElementById('testContainer').style.display === 'block') {
-        if (e.key === 'ArrowRight' || e.key.toLowerCase() === 'n') { handleNext(); }
-        else if (e.key === 'ArrowLeft' || e.key.toLowerCase() === 'p') { previousQuestion(); }
-        else if (e.key.toLowerCase() === 'r') { markReview(); }
-      }
-    });
-  };
+        themeSelector.value = savedTheme;
+        drawerThemeSelector.value = savedTheme;
 
-  async function startTest() {
-    sName = document.getElementById('studentName').value.trim();
-    if(!sName) return Swal.fire('Attention Required', 'Kripya apna poora naam darj karein.', 'warning');
-    
-    Swal.fire({title: 'Initializing Portal...', didOpen: () => Swal.showLoading()});
-    
-    try {
-      const response = await fetch(JSON_LINK);
-      const data = await response.json();
-      questions = [...data].sort(() => Math.random() - 0.5); 
-      userAns = new Array(questions.length).fill(null);
-      reviewList = new Array(questions.length).fill(false);
-      Swal.close();
-      
-      let elem = document.documentElement;
-      if (elem.requestFullscreen) { elem.requestFullscreen(); }
-      launchTest();
-    } catch (e) {
-      Swal.fire('Connection Error', 'Questions load karne me samasya hui.', 'error');
-    }
-  }
+        editor.on("inputRead", function(cm, change) {
+            if (change.text[0] === " " || change.origin === "+delete") return;
+            cm.showHint({ completeOnSingleClick: false, closeOnUnfocus: true, completeSingle: false });
+        });
 
-  function launchTest() {
-    document.getElementById('nameInput').style.display = 'none';
-    document.getElementById('testContainer').style.display = 'block';
-    loadQuestion();
-    timerId = setInterval(() => {
-      timeLeft--; saveToLocal();
-      let m = Math.floor(timeLeft/60), s = timeLeft%60;
-      document.getElementById('timer').innerText = `🕒 ${m}:${s<10?'0':''}${s}`;
-      if(timeLeft <= 0) submitQuiz();
-    }, 1000);
-  }
+        /* Drawer Controllers */
+        function openDrawer() {
+            drawer.classList.add('open');
+            overlay.classList.add('open');
+        }
+        function closeDrawer() {
+            drawer.classList.remove('open');
+            overlay.classList.remove('open');
+        }
 
-  function loadQuestion() {
-    const q = questions[currentIdx];
-    document.getElementById('testTitle').innerText = `${sName}`;
-    
-    let currentNum = (currentIdx + 1) < 10 ? `0${currentIdx + 1}` : (currentIdx + 1);
-    let totalNum = questions.length < 10 ? `0${questions.length}` : questions.length;
-    
-    document.getElementById('qCounter').innerText = `(${currentNum}/${totalNum})`;
-    document.getElementById('qText').innerText = q.question;
-    
-    let imgContainer = document.getElementById('qImageContainer');
-    imgContainer.innerHTML = q.image ? `<img src="${q.image}" class="q-image">` : '';
-    
-    document.getElementById('qOptions').innerHTML = q.options.map(o => `
-      <label class="option-label ${userAns[currentIdx] === o ? 'selected' : ''}" onclick="saveAns('${o}', this)">
-        <span>${o}</span>
-      </label>`).join('');
-    
-    document.getElementById('prevBtn').disabled = currentIdx === 0;
-    document.getElementById('nextBtn').innerText = currentIdx === questions.length - 1 ? 'Finish' : 'Next';
-    
-    document.getElementById('progressFill').style.width = `${((currentIdx+1)/questions.length)*100}%`;
-    renderPalette();
-    saveToLocal();
-  }
+        function updateTabBackgroundColor(themeName) {
+            if(themeName === 'monokai') document.documentElement.style.setProperty('--tab-active', '#272822');
+            else if(themeName === 'dracula') document.documentElement.style.setProperty('--tab-active', '#282a36');
+            else if(themeName === 'material-palenight') document.documentElement.style.setProperty('--tab-active', '#292d3e');
+            else document.documentElement.style.setProperty('--tab-active', '#ffffff');
+        }
 
-  function saveAns(val, el) {
-    userAns[currentIdx] = val;
-    reviewList[currentIdx] = false;
-    document.querySelectorAll('.option-label').forEach(l => l.classList.remove('selected'));
-    el.classList.add('selected');
-    renderPalette();
-    saveToLocal();
-  }
+        updateTabBackgroundColor(savedTheme);
 
-  function markReview() { 
-    reviewList[currentIdx] = true; 
-    userAns[currentIdx] = null; 
-    saveToLocal(); 
-    handleNext(); 
-  }
-  
-  function togglePalette() { document.getElementById('sidePalette').classList.toggle('open'); }
-  
-  function renderPalette() {
-    const grid = document.getElementById('paletteGrid'); grid.innerHTML = "";
-    let solved = 0, reviewed = 0;
+        function switchFile(fileType) {
+            const projects = getStore();
+            const activeProj = getActiveProjectName();
+            
+            if (typeof projects[activeProj] === 'string') {
+                projects[activeProj] = { html: editor.getValue(), css: "", js: "" };
+            }
+            
+            projects[activeProj][currentFile] = editor.getValue();
+            saveToStore(projects);
 
-    questions.forEach((_, i) => {
-      const btn = document.createElement('button');
-      btn.innerText = i + 1;
-      btn.className = 'palette-btn';
-      if(i === currentIdx) btn.classList.add('current');
-      
-      if(reviewList[i]) { btn.classList.add('reviewed'); reviewed++; }
-      else if(userAns[i]) { btn.classList.add('answered'); solved++; }
-      
-      btn.onclick = () => { 
-        currentIdx = i; loadQuestion(); 
-        if(window.innerWidth <= 1024) togglePalette(); 
-      };
-      grid.appendChild(btn);
-    });
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.getElementById(`tab-${fileType}`).classList.add('active');
 
-    document.getElementById('statSolved').innerText = solved;
-    document.getElementById('statReview').innerText = reviewed;
-    document.getElementById('statLeft').innerText = questions.length - (solved + reviewed);
-  }
+            currentFile = fileType;
+            if(fileType === 'html') editor.setOption("mode", "text/html");
+            if(fileType === 'css') editor.setOption("mode", "text/css");
+            if(fileType === 'js') editor.setOption("mode", "text/javascript");
 
-  function previousQuestion() { if(currentIdx > 0) { currentIdx--; loadQuestion(); } }
-  function handleNext() { if(currentIdx < questions.length - 1) { currentIdx++; loadQuestion(); } else { triggerManualSubmit(); } }
+            editor.setValue(projects[activeProj][fileType] || "");
+            updateTabBackgroundColor(editor.getOption("theme"));
+        }
 
-  function triggerManualSubmit() {
-    Swal.fire({ title: 'Finish Assessment?', text: 'Kya aap is online test ko submit karna chahte hain?', icon: 'question', showCancelButton: true, confirmButtonText: 'Yes, Submit' }).then(r => { if(r.isConfirmed) submitQuiz(); });
-  }
+        function getStore() {
+            let data = JSON.parse(localStorage.getItem('ds_v11_projects'));
+            if(!data) data = { "Project_1": { ...defaultProjectData } };
+            return data;
+        }
+        function saveToStore(data) { localStorage.setItem('ds_v11_projects', JSON.stringify(data)); }
+        function getActiveProjectName() { return localStorage.getItem('ds_v11_last_active') || "Project_1"; }
 
-  async function submitQuiz() {
-    clearInterval(timerId);
-    localStorage.removeItem('quiz_session_elite');
-    if (document.fullscreenElement) { document.exitFullscreen(); }
+        function refreshUI() {
+            const projects = getStore();
+            const lastActive = getActiveProjectName();
+            projectDrop.innerHTML = "";
+                        
+            Object.keys(projects).forEach(name => {
+                const opt = document.createElement('option');
+                opt.value = name; opt.innerText = name;
+                if(name === lastActive) opt.selected = true;
+                projectDrop.appendChild(opt);
+            });
+            
+            let currentProjData = projects[lastActive];
+            if (typeof currentProjData === 'string') currentProjData = { html: currentProjData, css: "", js: "" };
 
-    let rawScore = 0, correctCount = 0, wrongCount = 0, summaryHtml = "";
-    questions.forEach((q, i) => {
-      let isCorrect = userAns[i] === q.answer;
-      let statusClass = isCorrect ? 'sum-correct' : (userAns[i] ? 'sum-wrong' : 'sum-skipped');
-      if(userAns[i]) {
-          if(isCorrect) { correctCount++; rawScore += 1; }
-          else { wrongCount++; rawScore -= NEGATIVE_MARK; }
-      }
-      summaryHtml += `<div class="sum-item ${statusClass}">
-        <b>Q.${i+1}: ${q.question}</b><br>
-        Your Ans: <span style="font-weight:600">${userAns[i] || 'Skipped'}</span> ${isCorrect ? '✅' : (userAns[i] ? '❌ (-' + NEGATIVE_MARK + ')' : '')}<br>
-        <span style="color:var(--success-color); font-weight:600;">Correct Answer: ${q.answer}</span>
-      </div>`;
-    });
+            currentFile = 'html';
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.getElementById('tab-html').classList.add('active');
+            editor.setOption("mode", "text/html");
+            
+            editor.setValue(currentProjData.html || "");
+            updateLivePreview(currentProjData);
+        }
 
-    let finalScore = rawScore.toFixed(2);
-    let totalQ = questions.length;
-    let percent = ((rawScore / totalQ) * 100).toFixed(1);
-    if(percent < 0) percent = 0; 
-    let skippedCount = totalQ - (correctCount + wrongCount);
+        function switchProject() {
+            const projects = getStore();
+            const oldActive = getActiveProjectName();
+            let oldProjData = projects[oldActive];
+            if (typeof oldProjData === 'string') oldProjData = { html: oldProjData, css: "", js: "" };
+            
+            oldProjData[currentFile] = editor.getValue();
+            projects[oldActive] = oldProjData;
+            saveToStore(projects);
 
-    await Swal.fire({ title: 'Processing Results...', text: 'Report card generate ho rahi hai.', icon: 'success', timer: 1500, showConfirmButton: false });
+            localStorage.setItem('ds_v11_last_active', projectDrop.value);
+            refreshUI();
+        }
 
-    Swal.fire({
-      title: 'Performance Evaluation', width: '98%',
-      html: `
-        <div class="summary-header">
-           <h3>Assessment Report: ${sName}</h3>
-           <div class="score-display">${finalScore} / ${totalQ}</div>
-           
-           <div class="metrics-grid">
-              <div class="m-card">Accuracy<b>${percent}%</b></div>
-              <div class="m-card">Correct<b style="color:#4ade80">${correctCount}</b></div>
-              <div class="m-card">Wrong<b style="color:#f87171">${wrongCount}</b></div>
-              <div class="m-card">Skipped<b style="color:#94a3b8">${skippedCount}</b></div>
-           </div>
-        </div>
-        <div class="summary-box">${summaryHtml}</div>
-      `,
-      confirmButtonText: 'Restart Portal', allowOutsideClick: false
-    }).then(() => location.reload());
-  }
-</script>
+        function addNewProject() {
+            const name = prompt("Project Name:", "Project_" + Date.now().toString().slice(-3));
+            if(name) {
+                const projects = getStore();
+                projects[name] = { ...defaultProjectData };
+                saveToStore(projects);
+                localStorage.setItem('ds_v11_last_active', name);
+                refreshUI();
+            }
+        }
+
+        function deleteCurrentProject() {
+            const projects = getStore();
+            const current = getActiveProjectName();
+            if(Object.keys(projects).length <= 1) { alert("Kam se kam ek project hona zaroori hai!"); return; }
+            if(confirm(`Kya aap "${current}" ko delete karna chahte hain?`)) {
+                delete projects[current];
+                saveToStore(projects);
+                localStorage.setItem('ds_v11_last_active', Object.keys(projects)[0]);
+                refreshUI();
+            }
+        }
+
+        let dragging = false;
+        const start = () => { dragging = true; mask.style.display = 'block'; };
+        const end = () => { dragging = false; mask.style.display = 'none'; };
+        const move = (e) => {
+            if (!dragging) return;
+            const x = e.touches ? e.touches[0].clientX : e.clientX;
+            const y = e.touches ? e.touches[0].clientY : e.clientY;
+            if (window.innerWidth > 700) {
+                let p = (x / window.innerWidth) * 100;
+                if (p > 5 && p < 95) editorPanel.style.width = p + '%';
+            } else {
+                let h = ((y - 100) / (window.innerHeight - 100)) * 100;
+                if (h > 10 && h < 90) editorPanel.style.height = h + '%';
+            }
+        };
+        gutter.addEventListener('mousedown', start);
+        gutter.addEventListener('touchstart', start);
+        document.addEventListener('mousemove', move);
+        document.addEventListener('touchmove', move);
+        document.addEventListener('mouseup', end);
+        document.addEventListener('touchend', end);
+
+        editor.on('change', () => {
+            const projects = getStore();
+            const activeProj = getActiveProjectName();
+            let currentProjData = projects[activeProj];
+            if (typeof currentProjData === 'string') currentProjData = { html: currentProjData, css: "", js: "" };
+            
+            currentProjData[currentFile] = editor.getValue();
+            updateLivePreview(currentProjData);
+
+            projects[activeProj] = currentProjData;
+            saveToStore(projects);
+        });
+
+        function updateLivePreview(data) {
+            let htmlContent = data.html || "";
+            let cssContent = data.css || "";
+            let jsContent = data.js || "";
+
+            let compiledCode = htmlContent;
+
+            if(compiledCode.includes('style.css')) {
+                compiledCode = compiledCode.replace(/<link[^>]*href=["']style\.css["'][^>]*>/i, `<style>${cssContent}</style>`);
+            } else {
+                compiledCode = compiledCode.replace('</head>', `<style>${cssContent}</style></head>`);
+            }
+
+            if(compiledCode.includes('script.js')) {
+                compiledCode = compiledCode.replace(/<script[^>]*src=["']script\.js["'][^>]*><\/script>/i, `<script>${jsContent}<\/script>`);
+            } else {
+                compiledCode = compiledCode.replace('</body>', `<script>${jsContent}<\/script></body>`);
+            }
+
+            const doc = iframe.contentDocument;
+            doc.open(); doc.write(compiledCode); doc.close();
+        }
+
+        function toggleFS() { document.body.classList.toggle('fullscreen-preview'); }
+
+        function changeTheme() {
+            const selected = themeSelector.value;
+            editor.setOption("theme", selected);
+            drawerThemeSelector.value = selected;
+            localStorage.setItem('ds_v11_theme', selected); 
+            switchFile(currentFile); 
+        }
+
+        function changeThemeFromDrawer() {
+            const selected = drawerThemeSelector.value;
+            editor.setOption("theme", selected);
+            themeSelector.value = selected;
+            localStorage.setItem('ds_v11_theme', selected); 
+            switchFile(currentFile);
+            closeDrawer();
+        }
+
+        function formatCode() {
+            const cursor = editor.getCursor();
+            const content = editor.getValue();
+            let formatted = "";
+
+            if(currentFile === 'html') formatted = html_beautify(content, { indent_size: 2 });
+            if(currentFile === 'css') formatted = css_beautify(content, { indent_size: 2 });
+            if(currentFile === 'js') formatted = js_beautify(content, { indent_size: 2 });
+
+            editor.setValue(formatted);
+            editor.setCursor(cursor);
+        }
+
+        window.onload = refreshUI;
+
+        function downloadCode() {
+            const projects = getStore();
+            const activeProj = getActiveProjectName();
+            let data = projects[activeProj];
+            if (typeof data === 'string') data = { html: data, css: "", js: "" };
+
+            let downloadContent = data.html;
+            downloadContent = downloadContent.replace('</head>', `<style>${data.css}</style></head>`);
+            downloadContent = downloadContent.replace('</body>', `<script>${data.js}<\/script></body>`);
+
+            const blob = new Blob([downloadContent], {type: 'text/html'});
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = activeProj + '_production.html';
+            a.click();
+        }
+    </script>
 </body>
 </html>
